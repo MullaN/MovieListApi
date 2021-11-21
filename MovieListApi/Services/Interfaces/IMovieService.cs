@@ -1,6 +1,6 @@
 namespace MovieListApi.Services.Interfaces
 {
-	public IMovieServices
+	public interface IMovieServices
 	{
 		Task<MovieModel> Get(string id);
 		Task<IList<MovieModel>> GetAll();

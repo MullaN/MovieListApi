@@ -1,6 +1,6 @@
 namespace ListListApi.Services.Interfaces
 {
-	public IListEntryServices
+	public interface IListEntryServices
 	{
 		Task<ListEntryModel> Get(Guid id);
 		Task<IList<ListEntryModel>> GetAll();
