@@ -1,6 +1,6 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace MovieListApi.DataAccess
 {
@@ -12,10 +12,10 @@ namespace MovieListApi.DataAccess
         public ConnectionFactory(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("SqlConnection");
+            _connectionString = _configuration.GetValue<string>("Values:SqlConnection");
         }
         
         public IDbConnection CreateConnection()
-            => new SqlConnection(_connectionString);
+            => new NpgsqlConnection(_connectionString);
     }
 }

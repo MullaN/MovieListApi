@@ -1,0 +1,10 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Threading.Tasks;
+global using MovieListApi.Models;
+global using MovieListApi.Services;
+global using MovieListApi.Services.Interfaces;
+global using MovieListApi.DataAccess;
+global using MovieListApi.DataAccess.Entities;
+global using MovieListApi.DataAccess.Repositories;
+global using MovieListApi.DataAccess.Repositories.Interfaces;

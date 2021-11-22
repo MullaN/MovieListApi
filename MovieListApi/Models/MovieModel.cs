@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Dapper.Contrib.Extensions;
+using System.Text.Json.Serialization;
 
-namespace MovieListApi.DataAccess.Entities
+namespace MovieListApi.Models
 {
-    [Dapper.Contrib.Extensions.Table("movies")]
-    public class MovieEntity
+    public class MovieModel
     {
+        [Column("title")]
         public string Title { get; set; }
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int Year { get; set; }
         public string Rated { get; set; }
         public string Released { get; set; }
@@ -20,14 +21,25 @@ namespace MovieListApi.DataAccess.Entities
         public string Country { get; set; }
         public string Awards { get; set; }
         public string Poster { get; set; }
+        public Rating[] Ratings { get; set; }
         public string RottenTomatoesScore { get; set; }
+        [JsonPropertyName("Metascore")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int MetaScore { get; set; }
+        [JsonPropertyName("imdbRating")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public decimal ImdbRating { get; set; }
+        [JsonPropertyName("imdbVotes")]
         public string ImdbVotes { get; set; }
-        [ExplicitKey]
-        [Column("\"ImdbId\"")]
+        [JsonPropertyName("imdbID")]
         public string ImdbId { get; set; }
         public string Type { get; set; }
         public string BoxOffice { get; set; }
+    }
+
+    public class Rating
+    {
+        public string Source { get; set; }
+        public string Value { get; set; }
     }
 }
