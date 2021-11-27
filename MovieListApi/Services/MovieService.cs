@@ -63,7 +63,7 @@ namespace MovieListApi.Services
         {
             var entity = _mapper.Map<MovieEntity>(model);
             var result = await _movieRepository.Insert(entity);
-            return result ? model : null;
+            return result ? _mapper.Map<MovieModel>(entity) : null;
         }
     }
 }
