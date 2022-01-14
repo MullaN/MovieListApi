@@ -59,6 +59,45 @@ namespace MovieListApi.Services
             return _mapper.Map<List<MovieModel>>(movies);
         }
 
+        public async Task<IList<MovieModel>> Search(string queryString, bool searchExternal = false)
+        {
+            if (searchExternal)
+            {
+                var httpClient = _httpClientFactory.CreateClient("OMDBApi");
+                var response = await httpClient.GetAsync(httpClient.BaseAddress + $"&type=movie&s={queryString}");
+                var models = new List<MovieModel>();
+                if (response.IsSuccessStatusCode)
+                {
+                    using var contentStream =
+                        await response.Content.ReadAsStreamAsync();
+                    
+                    try
+                    {
+                        var movieFragments = await JsonSerializer.DeserializeAsync<SearchResultModel>(contentStream);
+
+                        foreach (var fragment in movieFragments.Search)
+                        {
+                            var movie = await Get(fragment.ImdbId);
+                            if (movie != null)
+                            {
+                                models.Add(movie);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+
+                return models;
+            }
+
+            var entities = await _movieRepository.Search(queryString);
+            var topTen = entities.OrderBy(entity => entity.Title.IndexOf(queryString)).Take(10);
+            return _mapper.Map<IList<MovieModel>>(topTen);
+        }
+
         private async Task<MovieModel> Insert(MovieModel model)
         {
             var entity = _mapper.Map<MovieEntity>(model);

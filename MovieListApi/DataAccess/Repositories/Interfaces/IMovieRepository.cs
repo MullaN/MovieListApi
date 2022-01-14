@@ -11,5 +11,6 @@ namespace MovieListApi.DataAccess.Repositories.Interfaces
         Task<bool> Insert(MovieEntity entity);
         Task<bool> Update(MovieEntity entity);
         Task<bool> Delete(MovieEntity entity);
+        Task<IList<MovieEntity>> Search(string queryString);
     }
 }

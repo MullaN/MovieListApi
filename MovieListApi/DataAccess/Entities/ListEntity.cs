@@ -10,5 +10,7 @@ namespace MovieListApi.DataAccess.Entities
         public Guid ListId { get; set; }
         public string ListName { get; set; }
         public string ListDescription { get; set; }
+        [Write(false)]
+        public List<MovieEntity> Movies { get; set; }
     }
 }

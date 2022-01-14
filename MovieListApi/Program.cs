@@ -7,6 +7,14 @@ using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000").AllowAnyHeader();;
+        });
+});
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddSingleton<ConnectionFactory>();
 builder.Services.AddSingleton<IMovieRepository, MovieRepository>();
@@ -27,8 +35,10 @@ builder.Services.AddHttpClient("OMDBApi", httpClient =>
 
 var app = builder.Build();
 
+app.UseCors();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.Equals("local"))
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "local")
 {
     app.UseSwagger();
     app.UseSwaggerUI();

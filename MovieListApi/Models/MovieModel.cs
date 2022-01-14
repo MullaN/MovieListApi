@@ -24,8 +24,7 @@ namespace MovieListApi.Models
         public Rating[] Ratings { get; set; }
         public string RottenTomatoesScore { get; set; }
         [JsonPropertyName("Metascore")]
-        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-        public int MetaScore { get; set; }
+        public string MetaScore { get; set; }
         [JsonPropertyName("imdbRating")]
         [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public decimal ImdbRating { get; set; }
@@ -35,6 +34,7 @@ namespace MovieListApi.Models
         public string ImdbId { get; set; }
         public string Type { get; set; }
         public string BoxOffice { get; set; }
+        public DateTime? Modified { get; set; }
     }
 
     public class Rating

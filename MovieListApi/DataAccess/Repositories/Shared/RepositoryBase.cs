@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Humanizer;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MovieListApi.DataAccess.Repositories.Shared
 {
@@ -17,21 +15,21 @@ namespace MovieListApi.DataAccess.Repositories.Shared
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<TEntity> Get(TKey id)
+        public virtual async Task<TEntity> Get(TKey id)
         {
             using var connection = _connectionFactory.CreateConnection();
             connection.Open();
             return await connection.GetAsync<TEntity>(id);
         }
 
-        public async Task<IList<TEntity>> GetAll()
+        public virtual async Task<IList<TEntity>> GetAll()
         {
             using var connection = _connectionFactory.CreateConnection();
             connection.Open();
             return (await connection.GetAllAsync<TEntity>()).ToList();
         }
 
-        public async Task<bool> Insert(TEntity entity)
+        public virtual async Task<bool> Insert(TEntity entity)
         {
             using var connection = _connectionFactory.CreateConnection();
             connection.Open();
@@ -39,14 +37,14 @@ namespace MovieListApi.DataAccess.Repositories.Shared
             return result > 0;
         }
 
-        public async Task<bool> Update(TEntity entity)
+        public virtual async Task<bool> Update(TEntity entity)
         {
             using var connection = _connectionFactory.CreateConnection();
             connection.Open();
             return await connection.UpdateAsync<TEntity>(entity);
         }
 
-        public async Task<bool> Delete(TEntity entity)
+        public virtual async Task<bool> Delete(TEntity entity)
         {
             using var connection = _connectionFactory.CreateConnection();
             connection.Open();
@@ -55,15 +53,30 @@ namespace MovieListApi.DataAccess.Repositories.Shared
 
         private string GenerateInsert(TEntity entity)
         {
-            var tableName = typeof(TEntity).Name.ToLower().Replace("entity", "s");
+            
+            var tableName = typeof(TEntity).Name.ToLower().Replace("entity", "").Pluralize();
             var columnNames = new List<string>();
             var values = new List<string>();
             foreach (var property in typeof(TEntity).GetProperties())
             {
+                if (property.HasAttribute<WriteAttribute>())
+                {
+                    continue;
+                }
+
+                if (property.GetValue(entity) == null)
+                {
+                    continue;
+                }
+                
                 columnNames.Add(property.Name.ToLower());
                 var stringValue = property.PropertyType == typeof(string)
-                    ? $"\'{((string) property.GetValue(entity)).Replace("'", "''")}'"
+                    ? $"\'{((string) property.GetValue(entity)).Replace("'", "''")}\'"
                     : $"{property.GetValue(entity)}";
+                if (property.PropertyType == typeof(Guid))
+                {
+                    stringValue = "\'" + stringValue + "\'";
+                }
                 values.Add(stringValue);
             }
 
