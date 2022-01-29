@@ -94,7 +94,7 @@ namespace MovieListApi.Services
             }
 
             var entities = await _movieRepository.Search(queryString);
-            var topTen = entities.OrderBy(entity => entity.Title.IndexOf(queryString)).Take(10);
+            var topTen = entities.OrderBy(entity => entity.Title.IndexOf(queryString, StringComparison.OrdinalIgnoreCase)).ThenBy(entity => entity.Title.Length).Take(10);
             return _mapper.Map<IList<MovieModel>>(topTen);
         }
 
